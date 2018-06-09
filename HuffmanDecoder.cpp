@@ -60,7 +60,7 @@ void HuffmanDecoder::decode(ifstream &codeFile, ofstream &decodeFile){
 		codeFile.get(charToRead);
 		for (int i = 7; i >= 0; --i)
 		{
-			char bit = (((charToRead >> i) & 1) + 48);
+			char bit = ((charToRead >> i) & 1);
 			if (tree.consumeSymbol(bit, symbol))
 			{
 				decodeFile << symbol;
@@ -71,7 +71,7 @@ void HuffmanDecoder::decode(ifstream &codeFile, ofstream &decodeFile){
 	codeFile.get(charToRead);
 	for (int i = 7; bitsToRead != 0; i--, bitsToRead--)
 	{
-		char bit = (((charToRead >> i) & 1) + 48);
+		char bit = ((charToRead >> i) & 1);
 		if (tree.consumeSymbol(bit, symbol))
 		{
 			decodeFile << symbol;

@@ -127,11 +127,8 @@ bool  BTree::isLeaf(Node* subTreeRoot){
 }
 
 bool BTree::consumeSymbol(char symbol, char &character){
-	if (symbol == '0')
-		decodingPointer = decodingPointer->left;
-
-	if (symbol == '1')
-		decodingPointer = decodingPointer->right;
+	if (symbol & 1) decodingPointer = decodingPointer->right;
+	else		decodingPointer = decodingPointer->left;
 
 	if (!isLeaf(decodingPointer))
 		return false;
