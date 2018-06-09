@@ -24,6 +24,5 @@ int main(int argc, char** argv){
         return 1;
     }
 
-    cout  << "Success!!!" << endl;
 	return 0;
 }
