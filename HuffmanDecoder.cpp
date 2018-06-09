@@ -1,47 +1,50 @@
 #include "BTree.h"
 #include "HuffmanDecoder.h"
 
-void HuffmanDecoder::decode(ifstream &codeFile, ofstream &decodeFile){
+HuffmanDecoder::HuffmanDecoder(){};
+
+void HuffmanDecoder::decode(const string& codeFilePath, const string& decodeFilePath) const {
+    ifstream fileStream(codeFilePath.c_str(), std::ifstream::in | std::ifstream::binary);
+    ofstream codeFileStream(decodeFilePath.c_str(), std::ofstream::out | std::ofstream::binary);
+    
+    decode(fileStream, codeFileStream);
+}
+
+void HuffmanDecoder::decode(ifstream &codeFile, ofstream &decodeFile) const {
 	map<char, int>table;
-	vector<string> readCharacters;
+	vector<string> readedCharacters;
 	string str = "";
-	char characterToRead;
-	char cToRead;
+	char characterToRead, cToRead;
 
 	string length="";
-	for (int i = 0; i < 100; i++)
-	{
+	for (int i = 0; i < 100; i++){
 		codeFile.get(cToRead);
 	
-		if (cToRead >= '0' && cToRead <= '9')
-		{
-			length = length + cToRead;
-		}
-		else break;
+		if (cToRead >= '0' && cToRead <= '9')   length += cToRead;
+		else                                    break;
 	}
+
 	codeFile.clear();
 	codeFile.seekg(length.size() + 1, ios::beg);
     
 	int tableLength = stoi(length);
 
 	bool chekFor = true;
-	for (int i = 0; i < tableLength; i++)
-	{
+	for (int i = 0; i < tableLength; i++){
 		codeFile.get(characterToRead);
 		if (characterToRead == '#' && chekFor){
-			readCharacters.push_back(str);
+			readedCharacters.push_back(str);
 			str.clear();
 			chekFor = false;
-		}
-		else{
+		} else {
 			str = str + characterToRead;
 			chekFor = true;
 		}
 	}
 
-	for (int i = 0; i < readCharacters.size() - 1; i += 2){
-		char key = readCharacters[i][0];
-		int value = stoi(readCharacters[i + 1], 0, 10);
+	for (int i = 0; i < readedCharacters.size() - 1; i += 2){
+		char key = readedCharacters[i][0];
+		int value = stoi(readedCharacters[i + 1], 0, 10);
 		table[key] = value;
 	}
 
@@ -55,49 +58,24 @@ void HuffmanDecoder::decode(ifstream &codeFile, ofstream &decodeFile){
 	int fileLengthInBytes = codeFile.tellg();
 	codeFile.clear();
 	codeFile.seekg(tableLength + length.size() + 1, ios::beg);
-	for (int i = tableLength + length.size() + 1; i<fileLengthInBytes - 2; i++)
-	{
+
+    for (int i = tableLength + length.size() + 1; i<fileLengthInBytes - 2; i++){
 		codeFile.get(charToRead);
-		for (int i = 7; i >= 0; --i)
-		{
+		for (int i = 7; i >= 0; --i){
 			char bit = ((charToRead >> i) & 1);
 			if (tree.consumeSymbol(bit, symbol))
-			{
 				decodeFile << symbol;
-			}
 		}
-
 	}
+    
 	codeFile.get(charToRead);
-	for (int i = 7; bitsToRead != 0; i--, bitsToRead--)
-	{
+	for (int i = 7; bitsToRead != 0; i--, bitsToRead--){
 		char bit = ((charToRead >> i) & 1);
 		if (tree.consumeSymbol(bit, symbol))
-		{
 			decodeFile << symbol;
-		}
 	}
 
 
 	decodeFile.close();
 	codeFile.close();
-
 }
-
-HuffmanDecoder::HuffmanDecoder(){};
-void HuffmanDecoder:: decode(){
-	string codeFilePath;
-	string decodeFilePath;
-
-	cout << "Please enter a file of the code:\n";
-	cin >> codeFilePath;
-	cout << "Please enter a file for the decode:\n";
-	cin >> decodeFilePath;
-
-	ifstream codeFile(codeFilePath.c_str(), std::ifstream::in | std::ifstream::binary);
-	ofstream decodeFile(decodeFilePath.c_str(), std::ofstream::out | std::ofstream::binary);
-
-	decode(codeFile, decodeFile);
-}
-
-

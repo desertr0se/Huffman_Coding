@@ -1,19 +1,17 @@
 #include "HuffmanEncoder.h"
 
-map<char, string> HuffmanEncoder::codeTable(map<char, int> table, BTree &tree){
-	
-	map<char, string> result;
-	for (map<char, int>::iterator it = table.begin(); it != table.end(); it++)
-	{
-		result[it->first] = tree.findCode(it->first);
-	}
-	return result;
-}
-void HuffmanEncoder::encode(ifstream &file, ofstream &codeFile){
-	map<char, int> table;
-	char charToRead;
+HuffmanEncoder::HuffmanEncoder(){};
 
-	while (file.get(charToRead))
+void HuffmanEncoder::encode(const string& filePath, const string& codeFilePath) const {
+    ifstream fileStream(filePath.c_str(), std::ifstream::in | std::ifstream::binary);
+    ofstream codeFileStream(codeFilePath.c_str(), std::ofstream::out | std::ofstream::binary);
+    
+    encode(fileStream, codeFileStream);
+}
+
+void HuffmanEncoder::encode(ifstream &file, ofstream &codeFile) const {
+	map<char, int> table;
+    for (char charToRead; file.get(charToRead);)
 		table[charToRead]++;
 
 	BTree tree(table);
@@ -22,16 +20,12 @@ void HuffmanEncoder::encode(ifstream &file, ofstream &codeFile){
 
 	map<char, string> tableOfCode = codeTable(table, tree);
 
-	for (map<char, int>::iterator it = table.begin(); it != table.end(); it++)
-	{
-		string str = to_string(it->second);
-		codeTab = codeTab + it->first + '#' + str + '#';
+    for (auto const& it : table){
+		string str = to_string(it.second);
+		codeTab = codeTab + it.first + '#' + str + '#';
 	}
-     
-	int tableLength = codeTab.length();
-	codeFile << tableLength;
-	codeFile << "?";
-	codeFile << codeTab;
+
+	codeFile << codeTab.length() << "?" << codeTab;
 
 	file.clear();
 	file.seekg(0, ios::beg);
@@ -39,19 +33,14 @@ void HuffmanEncoder::encode(ifstream &file, ofstream &codeFile){
 	vector<bool> codeVector;
 	char characterToRead;
     char codeSymbol = 0;
-	while (file.get(characterToRead))
-	{
-		
+	while (file.get(characterToRead)){
 		string temp = tableOfCode[characterToRead];
-		for (int i = 0; i < temp.size(); i++)
-		{
-			if (temp[i] == '0')
-				codeVector.push_back(0);
-			else codeVector.push_back(1);
-
+		for (int i = 0; i < temp.size(); i++){
+			if (temp[i] == '0') codeVector.push_back(0);
+			else                codeVector.push_back(1);
 		}
 
-	  while (codeVector.size() >= 8){
+        while (codeVector.size() >= 8){
 			for (int i = 7; i >= 0; --i){
 				codeSymbol = codeSymbol | ((codeVector[0]) << i);
 				codeVector.erase(codeVector.begin());
@@ -63,10 +52,9 @@ void HuffmanEncoder::encode(ifstream &file, ofstream &codeFile){
 
 	char bitLength = codeVector.size();
 	if (codeVector.size() > 0){
-	while (codeVector.size() < 8)
-		{
+        while (codeVector.size() < 8)
 			codeVector.push_back(0);
-		}
+
 		char codeSymbol = 0;
 		for (int i = 7; i >= 0; --i){
 			codeSymbol = codeSymbol | ((codeVector[0]) << i);
@@ -74,25 +62,17 @@ void HuffmanEncoder::encode(ifstream &file, ofstream &codeFile){
 		}
 		codeFile << codeSymbol;
 	}
-	codeFile << bitLength;
 
+	codeFile << bitLength;
 	codeFile.close();
 	file.close();
 
 }
-    HuffmanEncoder::HuffmanEncoder(){};
 
-	void HuffmanEncoder::encode(){
-		string filePath;
-		string codeFilePath;
+map<char, string> HuffmanEncoder::codeTable(map<char, int>& table, BTree& tree) const {
+    map<char, string> result;
+    for (auto const& entry : table)
+        result[entry.first] = tree.findCode(entry.first);
 
-		cout << "Please enter a file path of the text:\n";
-		cin >> filePath;
-		cout << "Please enter a file for the code:\n";
-		cin >> codeFilePath;
-
-		ifstream file(filePath.c_str(), std::ifstream::in | std::ifstream::binary);
-		ofstream codeFile(codeFilePath.c_str(), std::ofstream::out | std::ofstream::binary);
-
-		encode(file, codeFile);
-	}
+    return result;
+}

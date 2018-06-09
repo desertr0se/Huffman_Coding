@@ -5,11 +5,11 @@
 #define HUFFMANENCODER_H_
 
 class HuffmanEncoder{
-	map<char, string> codeTable(map<char, int> x, BTree &tree);
-	void encode(ifstream &file, ofstream &codedFile);
+	map<char, string> codeTable(map<char, int>&, BTree&) const;
+	void encode(ifstream&, ofstream&) const;
 public:
 	HuffmanEncoder();
-	void encode();
+    void encode(const string&, const string&) const;
 };
 
 #endif

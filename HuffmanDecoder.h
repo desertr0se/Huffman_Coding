@@ -4,11 +4,11 @@
 #define HUFFMANDECODER_H_
 
 class HuffmanDecoder{
-	void decode(ifstream &tableFile, ifstream &codedFile, ofstream &decodedFile);
-	void decode(ifstream &codedFile, ofstream &decodedFile);
+	void decode(ifstream&, ifstream&, ofstream&) const;
+	void decode(ifstream&, ofstream&) const;
 public:
 	HuffmanDecoder();
-	void decode();
+    void decode(const string&, const string&) const;
 };
 
 #endif
