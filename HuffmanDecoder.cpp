@@ -3,7 +3,7 @@
 
 void HuffmanDecoder::decode(ifstream &codeFile, ofstream &decodeFile){
 	map<char, int>table;
-	vector<string> readedCharacters;
+	vector<string> readCharacters;
 	string str = "";
 	char characterToRead;
 	char cToRead;
@@ -29,7 +29,7 @@ void HuffmanDecoder::decode(ifstream &codeFile, ofstream &decodeFile){
 	{
 		codeFile.get(characterToRead);
 		if (characterToRead == '#' && chekFor){
-			readedCharacters.push_back(str);
+			readCharacters.push_back(str);
 			str.clear();
 			chekFor = false;
 		}
@@ -39,9 +39,9 @@ void HuffmanDecoder::decode(ifstream &codeFile, ofstream &decodeFile){
 		}
 	}
 
-	for (int i = 0; i < readedCharacters.size() - 1; i += 2){
-		char key = readedCharacters[i][0];
-		int value = stoi(readedCharacters[i + 1], 0, 10);
+	for (int i = 0; i < readCharacters.size() - 1; i += 2){
+		char key = readCharacters[i][0];
+		int value = stoi(readCharacters[i + 1], 0, 10);
 		table[key] = value;
 	}
 
@@ -99,4 +99,5 @@ void HuffmanDecoder:: decode(){
 
 	decode(codeFile, decodeFile);
 }
+
 
